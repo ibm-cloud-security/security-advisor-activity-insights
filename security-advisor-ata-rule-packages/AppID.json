@@ -1,129 +1,148 @@
-[{
-		"comment": "Very high risk AppID activity",
-		"conditions": {
-			"any": [{
-					"fact": "action",
-					"operator": "equal",
-					"value": "update.idpConfig"
+{
+	"type": "AppID",
+	"rule": [
+		{
+			"comment": "Very high risk AppID activity",
+			"conditions": {
+				"any": [
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "appid.idp-config.update"
+					}
+				]
+			},
+			"event": {
+				"type": "AppID security configuration",
+				"params": {
+					"findingType": "appid-sec-conf"
 				}
-			]
+			}
 		},
-		"event": {
-			"type": "AppID security configuration",
-			"params": {
-				"findingType": "appid-sec-conf"
+		{
+			"comment": "failed logins per app exceed threshold within time window",
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "appid.user.authenticate"
+							}
+						]
+					},
+					{
+						"fact": "reason",
+						"operator": "equal",
+						"value": 401,
+						"path": ".reasonCode"
+					},
+					{
+						"fact": "occurrences",
+						"operator": "greaterThan",
+						"value": 100
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "10 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "app-failed-login-attempts",
+				"params": {
+					"findingType": "app-failed-login-attempts"
+				}
+			},
+			"type": "aggregate"
+		},
+		{
+			"comment": "AppID delete exceeded threshold within time window",
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "appid.cloud-directory-user.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "appid.cloud-directory-users.delete"
+							}
+						]
+					},
+					{
+						"fact": "occurrences",
+						"operator": "greaterThan",
+						"value": 100
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "30 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "appid-delete-users",
+				"params": {
+					"findingType": "appid-delete-users"
+				}
+			},
+			"type": "aggregate"
+		},
+		{
+			"comment": "service instance high risk API",
+			"conditions": {
+				"any": [
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "appid.instance.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "appid.instance.update"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "appid.instance.delete"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "appid.key.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "appid.key.delete"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "appid.binding.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "appid.binding.delete"
+					}
+				]
+			},
+			"event": {
+				"type": "appid service changes",
+				"params": {
+					"findingType": "appid-service"
+				}
 			}
 		}
-	},
-	{
-		"comment": "failed logins per app exceed threshold within time window",
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "appid.user.authentication"
-						}
-					]
-				}, {
-					"fact": "reason",
-					"operator": "equal",
-					"value": 400,
-					"path": ".reasonCode"
-				}, {
-					"fact": "occurrences",
-					"operator": "greaterThan",
-					"value": 100
-				}, {
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "10 minutes"
-				}
-			]
-		},
-
-		"event": {
-			"type": "app-failed-login-attempts",
-			"params": {
-				"findingType": "app-failed-login-attempts"
-			}
-		},
-		"type": "aggregate"
-	},
-	{
-		"comment": "AppID delete exceeded threshold within time window",
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "delete.cloudDirectoryUser"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "delete.cloudDirectoryUsers"
-						}
-					]
-				}, {
-					"fact": "occurrences",
-					"operator": "greaterThan",
-					"value": 100
-				}, {
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "30 minutes"
-				}
-			]
-		},
-		"event": {
-			"type": "appid-delete-users",
-			"params": {
-				"findingType": "appid-delete-users"
-			}
-		},
-		"type": "aggregate"
-	},
-	{
-		"comment": "service instance high risk API",
-		"conditions": {
-			"any": [{
-					"fact": "action",
-					"operator": "equal",
-					"value": "appid.instance.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "appid.instance.update"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "appid.instance.delete"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "appid.key.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "appid.key.delete"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "appid.binding.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "appid.binding.delete"
-				}
-
-			]
-		},
-		"event": {
-			"type": "appid service changes",
-			"params": {
-				"findingType": "appid-service"
-			}
-		}
-	}
-
-]
+	]
+}

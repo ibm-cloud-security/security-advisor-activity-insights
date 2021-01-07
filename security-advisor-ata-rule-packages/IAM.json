@@ -1,378 +1,432 @@
-[{
-		"comment": "Very high risk IAM activity",
-		"conditions": {
-			"any": [{
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-groups.member.add"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-groups.rule.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-groups.rule.update"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.serviceid-apikey.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.user-apikey.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.policy.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.policy.update"
-				}
-			]
-		},
-		"event": {
-			"type": "iam security configuration",
-			"params": {
-				"findingType": "iam-sec-conf"
-			}
-		}
-	},
-	{
-		"comment": "failed logins per account exceed threshold within time window",
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.user-apikey.login"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.serviceid-apikey.login"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.user-identitycookie.login"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.user-refreshtoken.login"
-						}
-					]
-				}, {
-					"fact": "reason",
-					"operator": "equal",
-					"value": 400,
-					"path": ".reasonCode"
-				}, {
-					"fact": "occurrences",
-					"operator": "greaterThan",
-					"value": 100
-				}, {
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "30 minutes"
-				}
-			]
-		},
-
-		"event": {
-			"type": "account-failed-login-attempts",
-			"params": {
-				"findingType": "account-failed-login-attempts"
-			}
-		},
-		"type": "aggregate"
-	},
-	{
-		"comment": "account reads exceed threshold within time window",
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.member.read"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.rule.read"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.group.read"
-						}
-					]
-				}, {
-					"fact": "occurrences",
-					"operator": "greaterThan",
-					"value": 100
-				}, {
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "30 minutes"
-				}
-			]
-		},
-		"event": {
-			"type": "account-reads",
-			"params": {
-				"findingType": "account-iam-reads-threshold"
-			}
-		},
-		"type": "aggregate"
-	},
-	{
-		"comment": "account delete exceed threshold within time window",
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.group.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.member.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.rule.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.account-serviceid.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.user-apikey.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.serviceid-apikey.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-am.policy.delete"
-						}
-					]
-				}, {
-					"fact": "occurrences",
-					"operator": "greaterThan",
-					"value": 100
-				}, {
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "30 minutes"
-				}
-			]
-		},
-		"event": {
-			"type": "account-delete",
-			"params": {
-				"findingType": "iam-delete-account-threshold"
-			}
-		},
-		"type": "aggregate"
-	},
-	{
-		"comment": "account delete outside change control window",
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.group.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.member.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.rule.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.account-serviceid.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.user-apikey.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.serviceid-apikey.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-am.policy.delete"
-						}
-					]
-				}, {
-					"fact": "timeOfDay",
-					"operator": "equal",
-					"value": true,
-					"params": {
-						"dayStartTime": "1700",
-						"dayEndTime": "0800"
+{
+	"type": "IAM",
+	"rule": [
+		{
+			"comment": "Very high risk IAM activity",
+			"conditions": {
+				"any": [
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-groups.member.add"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-groups.rule.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-groups.rule.update"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.serviceid-apikey.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.user-apikey.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-am.policy.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-am.policy.update"
 					}
+				]
+			},
+			"event": {
+				"type": "iam security configuration",
+				"params": {
+					"findingType": "iam-sec-conf"
 				}
-
-			]
+			}
 		},
-		"event": {
-			"type": "iam-delete-ccw",
-			"params": {
-				"findingType": "iam-delete-ccw"
+		{
+			"comment": "failed logins per account exceed threshold within time window",
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.user-apikey.login"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.serviceid-apikey.login"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.user-identitycookie.login"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.user-refreshtoken.login"
+							}
+						]
+					},
+					{
+						"fact": "reason",
+						"operator": "equal",
+						"value": 400,
+						"path": ".reasonCode"
+					},
+					{
+						"fact": "occurrences",
+						"operator": "greaterThan",
+						"value": 100
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "30 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "account-failed-login-attempts",
+				"params": {
+					"findingType": "account-failed-login-attempts"
+				}
+			},
+			"type": "aggregate"
+		},
+		{
+			"comment": "account reads exceed threshold within time window",
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.member.read"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.rule.read"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.group.read"
+							}
+						]
+					},
+					{
+						"fact": "occurrences",
+						"operator": "greaterThan",
+						"value": 100
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "30 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "account-reads",
+				"params": {
+					"findingType": "account-iam-reads-threshold"
+				}
+			},
+			"type": "aggregate"
+		},
+		{
+			"comment": "account delete exceed threshold within time window",
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.group.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.member.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.rule.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.account-serviceid.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.user-apikey.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.serviceid-apikey.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-am.policy.delete"
+							}
+						]
+					},
+					{
+						"fact": "occurrences",
+						"operator": "greaterThan",
+						"value": 100
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "30 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "account-delete",
+				"params": {
+					"findingType": "iam-delete-account-threshold"
+				}
+			},
+			"type": "aggregate"
+		},
+		{
+			"comment": "account delete outside change control window",
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.group.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.member.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.rule.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.account-serviceid.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.user-apikey.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.serviceid-apikey.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-am.policy.delete"
+							}
+						]
+					},
+					{
+						"fact": "timeOfDay",
+						"operator": "equal",
+						"value": true,
+						"params": {
+							"dayStartTime": "1700",
+							"dayEndTime": "0800"
+						}
+					}
+				]
+			},
+			"event": {
+				"type": "iam-delete-ccw",
+				"params": {
+					"findingType": "iam-delete-ccw"
+				}
+			}
+		},
+		{
+			"comment": "Dormant rule: account delete by user not whitelisted.",
+			"dormant": true,
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.group.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.member.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.rule.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.account-serviceid.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.user-apikey.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-identity.serviceid-apikey.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-am.policy.delete"
+							}
+						]
+					},
+					{
+						"fact": "initiator",
+						"path": ".name",
+						"operator": "notIn",
+						"value": [
+							"example@ibm.com",
+							"example2@ibm.com"
+						]
+					}
+				]
+			},
+			"event": {
+				"type": "iam acount delete by user not whitelisted",
+				"params": {
+					"findingType": "iam-delete-whitelist"
+				}
+			}
+		},
+		{
+			"comment": "Coincident: groups rule read and rule delete events occur by within 10 minutes",
+			"dormant": true,
+			"conditions": {
+				"all": [
+					{
+						"all": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.rule.read"
+							},
+							{
+								"fact": "occurrences",
+								"operator": "equal",
+								"value": 1
+							}
+						]
+					},
+					{
+						"all": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "iam-groups.rule.delete"
+							},
+							{
+								"fact": "occurrences",
+								"operator": "equal",
+								"value": 1
+							}
+						]
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "10 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "coincident: rule read and delete",
+				"params": {
+					"findingType": "iam-coincident-read-delete"
+				}
+			},
+			"type": "coincident"
+		},
+		{
+			"comment": "The following is a service instance rule instantiated for IAM. high risk API",
+			"conditions": {
+				"any": [
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.instance.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.instance.update"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.instance.delete"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.key.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.key.delete"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.binding.create"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "iam-identity.binding.delete"
+					}
+				]
+			},
+			"event": {
+				"type": "iam-identity service changes",
+				"params": {
+					"findingType": "iam-identity-service"
+				}
 			}
 		}
-	},
-	{
-		"comment": "Dormant rule: account delete by user not whitelisted.",
-		"dormant": true,
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.group.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.member.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.rule.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.account-serviceid.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.user-apikey.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-identity.serviceid-apikey.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-am.policy.delete"
-						}
-					]
-				}, {
-					"fact": "initiator",
-					"path": ".name",
-					"operator": "notIn",
-					"value": ["example@ibm.com", "example2@ibm.com"]
-				}
-
-			]
-		},
-		"event": {
-			"type": "iam acount delete by user not whitelisted",
-			"params": {
-
-				"findingType": "iam-delete-whitelist"
-
-			}
-		}
-	},
-	{
-		"comment": "Coincident: groups rule read and rule delete events occur by within 10 minutes",
-		"dormant": true,
-		"conditions": {
-			"all": [
-				{
-					"all": [
-						{
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.rule.read"
-						},
-						{
-							"fact": "occurrences",
-							"operator": "equal",
-							"value": 1
-						}
-					]
-				},
-				{
-					"all": [
-						{
-							"fact": "action",
-							"operator": "equal",
-							"value": "iam-groups.rule.delete"
-						},
-						{
-							"fact": "occurrences",
-							"operator": "equal",
-							"value": 1
-						}
-					]
-				},
-				{
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "10 minutes"
-				}
-			]
-		},
-		"event": {
-			"type": "coincident: rule read and delete",
-			"params": {
-
-				"findingType": "iam-coincident-read-delete"
-
-			}
-		},
-		"type": "coincident"
-	},
-	{
-		"comment": "The following is a service instance rule instantiated for IAM. high risk API",
-		"conditions": {
-			"any": [{
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.instance.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.instance.update"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.instance.delete"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.key.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.key.delete"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.binding.create"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "iam-identity.binding.delete"
-				}
-
-			]
-		},
-		"event": {
-			"type": "iam-identity service changes",
-			"params": {
-				"findingType": "iam-identity-service"
-			}
-		}
-	}
-
-]
+	]
+}

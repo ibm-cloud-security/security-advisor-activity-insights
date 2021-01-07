@@ -1,185 +1,220 @@
-[{
-		"comment": "Very high risk certificate manager activity",
-		"conditions": {
-			"any": [{
-					"fact": "action",
-					"operator": "equal",
-					"value": "cloudcerts.notification-channel.delete"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "cloudcerts.notification-channel.update"
-				}, {
-					"fact": "action",
-					"operator": "equal",
-					"value": "cloudcerts.notification-channel.state"
-				}
-
-			]
-		},
-		"event": {
-			"type": "Certificate manager notification channel configuration",
-			"params": {
-				"findingType": "cert-notification-conf"
-			}
-		}
-	}, {
-		"comment": "certificate reimport threshold within time window",
-		"conditions": {
-			"all": [{
-					"fact": "action",
-					"operator": "equal",
-					"value": "cloudcerts.certificate.reimport"
-				}, {
-					"fact": "reason",
-					"operator": "notEqual",
-					"value": 200,
-					"path": ".reasonCode"
-				}, {
-					"fact": "occurrences",
-					"operator": "greaterThan",
-					"value": 2
-				}, {
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "1440 minutes"
-				}
-			]
-		},
-		"event": {
-			"type": "certificate reimport ",
-			"params": {
-				"findingType": "cert-reimport"
-			}
-		},
-		"type": "aggregate"
-	}, {
-		"comment": "certificate notification failure",
-		"conditions": {
-			"all": [{
-					"fact": "action",
-					"operator": "equal",
-					"value": "cloudcerts.notification.sent"
-				}, {
-					"fact": "reason",
-					"operator": "notEqual",
-					"value": 200,
-					"path": ".reasonCode"
-				}, {
-					"fact": "occurrences",
-					"operator": "greaterThan",
-					"value": 2
-				}, {
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "1440 minutes"
-				}
-			]
-		},
-		"event": {
-			"type": "certificate notification failure",
-			"params": {
-				"findingType": "cert-notification-fail"
-			}
-		},
-		"type": "aggregate"
-	}, 
-	{
-		"comment": "certificate manager indicative API outside change control window",
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "cloudcerts.certificate.delete"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "cloudcerts.certificate.reimport"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "cloudcerts.certificate.download"
-						}
-					]
-				}, {
-					"fact": "timeOfDay",
-					"operator": "equal",
-					"value": true,
-					"params": {
-						"dayStartTime": "1700",
-						"dayEndTime": "0800"
+{
+	"type": "Cert",
+	"rule": [
+		{
+			"comment": "Very high risk certificate manager activity",
+			"conditions": {
+				"any": [
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "cloudcerts.notification-channel.delete"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "cloudcerts.notification-channel.update"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "cloudcerts.notification-channel.set-on"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "cloudcerts.notification-channel.set-off"
 					}
+				]
+			},
+			"event": {
+				"type": "Certificate manager notification channel configuration",
+				"params": {
+					"findingType": "cert-notification-conf"
 				}
-			]
-		},
-		"event": {
-			"type": "certificate manager indicative API outside change control window",
-			"params": {
-				"findingType": "cert-ccw"
 			}
-		}
-	}, {
-		"comment": "Dormant rule: certificate download by user not whitelisted.",
-		"dormant": true,
-		"conditions": {
-			"all": [{
-					"fact": "action",
-					"operator": "equal",
-					"value": "cloudcerts.certificate.download"
-				}, {
-					"fact": "initiator",
-					"path": ".name",
-					"operator": "notIn",
-					"value": ["example@ibm.com", "example2@ibm.com"]
+		},
+		{
+			"comment": "certificate reimport threshold within time window",
+			"conditions": {
+				"all": [
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "cloudcerts.certificate.reimport"
+					},
+					{
+						"fact": "reason",
+						"operator": "notEqual",
+						"value": 200,
+						"path": ".reasonCode"
+					},
+					{
+						"fact": "occurrences",
+						"operator": "greaterThan",
+						"value": 2
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "1440 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "certificate reimport ",
+				"params": {
+					"findingType": "cert-reimport"
 				}
-			]
+			},
+			"type": "aggregate"
 		},
-		"event": {
-			"type": "certificate download by user not whitelisted",
-			"params": {
-
-				"findingType": "cert-download-whitelist"
-
-			}
-		}
-	}, {
-		"comment": "service instance high risk API",
-		"conditions": {
-			"all": [{
-					"any": [{
-							"fact": "action",
-							"operator": "equal",
-							"value": "cloudcerts.instance.create"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "cloudcerts.instance.update"
-						}, {
-							"fact": "action",
-							"operator": "equal",
-							"value": "cloudcerts.instance.delete"
+		{
+			"comment": "certificate notification failure",
+			"conditions": {
+				"all": [
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "cloudcerts.notification.send"
+					},
+					{
+						"fact": "reason",
+						"operator": "notEqual",
+						"value": 200,
+						"path": ".reasonCode"
+					},
+					{
+						"fact": "occurrences",
+						"operator": "greaterThan",
+						"value": 2
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "1440 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "certificate notification failure",
+				"params": {
+					"findingType": "cert-notification-fail"
+				}
+			},
+			"type": "aggregate"
+		},
+		{
+			"comment": "certificate manager indicative API outside change control window",
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "cloudcerts.certificate.delete"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "cloudcerts.certificate.reimport"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "cloudcerts.certificate.download"
+							}
+						]
+					},
+					{
+						"fact": "timeOfDay",
+						"operator": "equal",
+						"value": true,
+						"params": {
+							"dayStartTime": "1700",
+							"dayEndTime": "0800"
 						}
-
-					]
-				}, {
-					"fact": "occurrences",
-					"operator": "greaterThan",
-					"value": 2
-				}, {
-					"fact": "withInLast",
-					"operator": "equal",
-					"value": "1440 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "certificate manager indicative API outside change control window",
+				"params": {
+					"findingType": "cert-ccw"
 				}
-			]
-		},
-		"event": {
-			"type": "certificate manager service changes",
-			"params": {
-				"findingType": "cert-service"
 			}
 		},
-		"type": "aggregate"
-	}
-
-]
+		{
+			"comment": "Dormant rule: certificate download by user not whitelisted.",
+			"dormant": true,
+			"conditions": {
+				"all": [
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "cloudcerts.certificate.download"
+					},
+					{
+						"fact": "initiator",
+						"path": ".name",
+						"operator": "notIn",
+						"value": [
+							"example@ibm.com",
+							"example2@ibm.com"
+						]
+					}
+				]
+			},
+			"event": {
+				"type": "certificate download by user not whitelisted",
+				"params": {
+					"findingType": "cert-download-whitelist"
+				}
+			}
+		},
+		{
+			"comment": "service instance high risk API",
+			"conditions": {
+				"all": [
+					{
+						"any": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "cloudcerts.instance.create"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "cloudcerts.instance.update"
+							},
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "cloudcerts.instance.delete"
+							}
+						]
+					},
+					{
+						"fact": "occurrences",
+						"operator": "greaterThan",
+						"value": 2
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "1440 minutes"
+					}
+				]
+			},
+			"event": {
+				"type": "certificate manager service changes",
+				"params": {
+					"findingType": "cert-service"
+				}
+			},
+			"type": "aggregate"
+		}
+	]
+}

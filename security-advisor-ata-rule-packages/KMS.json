@@ -1,126 +1,122 @@
-[
-{	"comment": "kms secrets delete - high risk API",
-	"conditions": {
-		"all": [
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.secrets.delete"
-		}
-		]
-	},
-	"event": {
-		"type": "kms key deleted",
-		"params": {
-			"findingType": "kms-key-deleted"
-		}
-	}
-},
-
-
-{	"comment": "kms.secrets.unwrap outside change control window - indicative API",
-	"conditions": {
-		"all": [
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.secrets.unwrap"
+{
+	"type": "KMS",
+	"rule": [
+		{	"comment": "kms secrets delete - high risk API",
+			"conditions": {
+				"all": [
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.secrets.delete"
+				}
+				]
+			},
+			"event": {
+				"type": "kms key deleted",
+				"params": {
+					"findingType": "kms-key-deleted"
+				}
+			}
 		},
-		{
-			"fact": "timeOfDay",
-			"operator": "equal",
-			"value": true,
-			"params": {
-				"dayStartTime": "1700",
-				"dayEndTime": "0800"
+		{	"comment": "kms.secrets.unwrap outside change control window - indicative API",
+			"conditions": {
+				"all": [
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.secrets.unwrap"
+				},
+				{
+					"fact": "timeOfDay",
+					"operator": "equal",
+					"value": true,
+					"params": {
+						"dayStartTime": "1700",
+						"dayEndTime": "0800"
+					}
+				}
+				]
+			},
+			"event": {
+				"type": "kms-key-unwrap outside change control window",
+				"params": {
+					"findingType": "kms-key-unwrap-ccw"
+				}
+			}
+		},
+		{	"comment": "kms.secrets.unwrap by user not whitelisted. Dormant Rule for indicative API",
+			"dormant": true,
+			"conditions": {
+				"all": [
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.secrets.unwrap"
+				},
+				{
+					"fact": "initiator",
+					"path": ".name",
+					"operator": "notIn",
+					"value": [
+					"example@ibm.com",
+					"example2@ibm.com"
+					]
+				}
+				]
+			},
+			"event": {
+				"type": "kms-key-unwrap by user not white listed",
+				"params": {
+					"findingType": "kms-key-unwrap-whitelist"
+				}
+			}
+		},
+		{	"comment": "The following is a service instance rule instantiated for KMS. high risk API. ",
+			"conditions": {
+				"any": [{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.instance.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.instance.update"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.instance.delete"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.key.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.key.delete"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.binding.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "kms.binding.delete"
+				}
+				
+				]
+			},
+			"event": {
+				"type": "KMS service changes",
+				"params": {
+					"findingType": "kms-service"
+				}
 			}
 		}
-		]
-	},
-	"event": {
-		"type": "kms-key-unwrap outside change control window",
-		"params": {
-			"findingType": "kms-key-unwrap-ccw"
-		}
-	}
-},
-
-
-{	"comment": "kms.secrets.unwrap by user not whitelisted. Dormant Rule for indicative API",
-	"dormant": true,
-	"conditions": {
-		"all": [
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.secrets.unwrap"
-		},
-		{
-			"fact": "initiator",
-			"path": ".name",
-			"operator": "notIn",
-			"value": [
-			"example@ibm.com",
-			"example2@ibm.com"
-			]
-		}
-		]
-	},
-	"event": {
-		"type": "kms-key-unwrap by user not white listed",
-		"params": {
-			"findingType": "kms-key-unwrap-whitelist"
-		}
-	}
-},
-
-
-{	"comment": "The following is a service instance rule instantiated for KMS. high risk API. ",
-	"conditions": {
-		"any": [{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.instance.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.instance.update"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.instance.delete"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.key.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.key.delete"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.binding.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "kms.binding.delete"
-		}
-		
-		]
-	},
-	"event": {
-		"type": "KMS service changes",
-		"params": {
-			"findingType": "kms-service"
-		}
-	}
+	]		
 }
-
-]

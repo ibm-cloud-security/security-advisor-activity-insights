@@ -1,345 +1,335 @@
-[
-
-{	"comment": "Very high risk IKS activity",
-	"conditions": {
-		"any": [{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.account-credentials.set"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.alb.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.apikey.reset"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.cluster-feature.enable"
-		},		
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.usersubnet.add"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.mzlb.create"
-		},		
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.subnet.add"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.subnet.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.service.bind"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.service.unbind"
-		}
-		]
-	},
-	"event": {
-		"type": "IKS high risk API",
-		"params": {
-			"findingType": "iks-high-risk"
-		}
-	}
-},
-
-{	"comment": "IKS change to logging detected",
-	"conditions": {
-		"any": [
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.logging-filter.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.logging-filter.update"
-		},		
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.logging-config.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.logging-config.delete"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.logging-config.update"
-		}		
-		]
-	},
-	"event": {
-		"type": "IKS logging change",
-		"params": {
-			"findingType": "iks-logging-change"
-		}
-	}
-},
-
-{	"comment": "Indicative IKS API exceed threshold within time window",
-	"conditions": {
-		"all": [{
-			"any": [{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.reboot"
+{
+	"type": "IKS",
+	"rule": [
+		{	"comment": "Very high risk IKS activity",
+			"conditions": {
+				"any": [{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.account-credentials.set"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.cluster-alb.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.apikey.reset"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.cluster-feature.enable"
+				},		
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.usersubnet.add"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.mzlb.create"
+				},		
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.subnet.add"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.subnet.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.service.bind"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.service.unbind"
+				}
+				]
 			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.reload"
-			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.update"
-			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.version.update"
+			"event": {
+				"type": "IKS high risk API",
+				"params": {
+					"findingType": "iks-high-risk"
+				}
 			}
-			]
 		},
-		{
-			"fact": "occurrences",
-			"operator": "greaterThan",
-			"value": 10
-		},
-		{
-			"fact": "withInLast",
-			"operator": "equal",
-			"value": "30 minutes"
-		}
-		]
-	},
-
-	"event": {
-		"type": "iks-indicative-api-threshold",
-		"params": {
-			"findingType": "iks-indicative-api-threshold"
-		}
-	},
-	"type": "aggregate"
-},
-
-{	"comment": "Indicative IKS API outside of change control window",
-	"conditions": {
-		"all": [{
-			"any": [{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.reboot"
+		{	"comment": "IKS change to logging detected",
+			"conditions": {
+				"any": [
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.logging-filter.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.logging-filter.update"
+				},		
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.logging-config.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.logging-config.delete"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.logging-config.refresh"
+				}		
+				]
 			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.reload"
-			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.update"
-			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.version.update"
+			"event": {
+				"type": "IKS logging change",
+				"params": {
+					"findingType": "iks-logging-change"
+				}
 			}
-			]
 		},
-		{
-			"fact": "timeOfDay",
-			"operator": "equal",
-			"value": true,
-			"params": {
-				"dayStartTime": "1700",
-				"dayEndTime": "0800"
-			}
-		}
-		
-		]
-	},
-
-	"event": {
-		"type": "iks indicative api outside change control window",
-		"params": {
-			"findingType": "iks-indicative-api-ccw"
-		}
-	}
-	
-},
-
-
-{	"comment": "Indicative IKS API by user not white listed",
-	"dormant": true,
-	"conditions": {
-		"all": [{
-			"any": [{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.reboot"
-			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.reload"
-			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.worker.update"
-			},
-			{
-				"fact": "action",
-				"operator": "equal",
-				"value": "containers-kubernetes.version.update"
-			}
-			]
-		},
-		{
-			"fact": "initiator",
-			"path": ".name",
-			"operator": "notIn",
-			"value": ["example@ibm.com", "example2@ibm.com"]
-		}
-		
-		]
-	},
-
-	"event": {
-		"type": "iks indicative api whitelist",
-		"params": {
-			"findingType": "iks-indicative-api-whitelist"
-		}
-	}
-	
-},
-
-
-
-{	"comment": "Coincident: update and reboot events occur by within 10 minutes",
-	"dormant": true,
-	"conditions": {
-		"all": [
-			{
-				"all": [
+		{	"comment": "Indicative IKS API exceed threshold within time window",
+			"conditions": {
+				"all": [{
+					"any": [{
+						"fact": "action",
+						"operator": "equal",
+						"value": "containers-kubernetes.worker.reboot"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "containers-kubernetes.worker.reload"
+					},
 					{
 						"fact": "action",
 						"operator": "equal",
 						"value": "containers-kubernetes.worker.update"
 					},
 					{
-						"fact": "occurrences",
+						"fact": "action",
 						"operator": "equal",
-						"value": 1
+						"value": "containers-kubernetes.version.update"
 					}
+					]
+				},
+				{
+					"fact": "occurrences",
+					"operator": "greaterThan",
+					"value": 10
+				},
+				{
+					"fact": "withInLast",
+					"operator": "equal",
+					"value": "30 minutes"
+				}
 				]
 			},
-			{
-				"all": [
-					{
+		
+			"event": {
+				"type": "iks-indicative-api-threshold",
+				"params": {
+					"findingType": "iks-indicative-api-threshold"
+				}
+			},
+			"type": "aggregate"
+		},
+		{	"comment": "Indicative IKS API outside of change control window",
+			"conditions": {
+				"all": [{
+					"any": [{
 						"fact": "action",
 						"operator": "equal",
 						"value": "containers-kubernetes.worker.reboot"
 					},
 					{
-						"fact": "occurrences",
+						"fact": "action",
 						"operator": "equal",
-						"value": 1
+						"value": "containers-kubernetes.worker.reload"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "containers-kubernetes.worker.update"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "containers-kubernetes.version.update"
+					}
+					]
+				},
+				{
+					"fact": "timeOfDay",
+					"operator": "equal",
+					"value": true,
+					"params": {
+						"dayStartTime": "1700",
+						"dayEndTime": "0800"
+					}
+				}
+				
+				]
+			},
+		
+			"event": {
+				"type": "iks indicative api outside change control window",
+				"params": {
+					"findingType": "iks-indicative-api-ccw"
+				}
+			}
+			
+		},
+		{	"comment": "Indicative IKS API by user not white listed",
+			"dormant": true,
+			"conditions": {
+				"all": [{
+					"any": [{
+						"fact": "action",
+						"operator": "equal",
+						"value": "containers-kubernetes.worker.reboot"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "containers-kubernetes.worker.reload"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "containers-kubernetes.worker.update"
+					},
+					{
+						"fact": "action",
+						"operator": "equal",
+						"value": "containers-kubernetes.version.update"
+					}
+					]
+				},
+				{
+					"fact": "initiator",
+					"path": ".name",
+					"operator": "notIn",
+					"value": ["example@ibm.com", "example2@ibm.com"]
+				}
+				
+				]
+			},
+		
+			"event": {
+				"type": "iks indicative api whitelist",
+				"params": {
+					"findingType": "iks-indicative-api-whitelist"
+				}
+			}
+			
+		},
+		{	"comment": "Coincident: update and reboot events occur by within 10 minutes",
+			"dormant": true,
+			"conditions": {
+				"all": [
+					{
+						"all": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "containers-kubernetes.worker.update"
+							},
+							{
+								"fact": "occurrences",
+								"operator": "equal",
+								"value": 1
+							}
+						]
+					},
+					{
+						"all": [
+							{
+								"fact": "action",
+								"operator": "equal",
+								"value": "containers-kubernetes.worker.reboot"
+							},
+							{
+								"fact": "occurrences",
+								"operator": "equal",
+								"value": 1
+							}
+						]
+					},
+					{
+						"fact": "withInLast",
+						"operator": "equal",
+						"value": "30 minutes"
 					}
 				]
 			},
-			{
-				"fact": "withInLast",
-				"operator": "equal",
-				"value": "30 minutes"
-			}
-		]
-	},
-	"event": {
-		"type": "coincident: worker update, worker reboot",
-		"params": {
-
-			"findingType": "iks-coincident-update-reboot"
-
-		}
-	},
-	"type": "coincident"
-},
-
-
-
-{	"comment": "service instance high risk API",
-	"conditions": {
-		"any": [{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.instance.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.instance.update"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.instance.delete"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.key.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.key.delete"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.binding.create"
-		},
-		{
-			"fact": "action",
-			"operator": "equal",
-			"value": "containers-kubernetes.binding.delete"
-		}
+			"event": {
+				"type": "coincident: worker update, worker reboot",
+				"params": {
 		
-		]
-	},
-	"event": {
-		"type": "IKS service changes",
-		"params": {
-			"findingType": "iks-service"
+					"findingType": "iks-coincident-update-reboot"
+		
+				}
+			},
+			"type": "coincident"
+		},
+		{	"comment": "service instance high risk API",
+			"conditions": {
+				"any": [{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.instance.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.instance.update"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.instance.delete"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.key.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.key.delete"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.binding.create"
+				},
+				{
+					"fact": "action",
+					"operator": "equal",
+					"value": "containers-kubernetes.binding.delete"
+				}
+				
+				]
+			},
+			"event": {
+				"type": "IKS service changes",
+				"params": {
+					"findingType": "iks-service"
+				}
+			}
 		}
-	}
+	]		
 }
-
-]
