@@ -28,8 +28,8 @@ You can use the following steps to install an agent that will run on one of your
      - The `<cos_region>` value is the region in which your COS is deployed. Options include `us-south` or `eu-gb`.
      - The `<cos_api_key>` value is the [api key](https://cloud.ibm.com/docs/services/cloud-object-storage/iam?topic=cloud-object-storage-service-credentials#service-credentials) that you created to access your COS instance and bucket. The key should have the Writer IAM service role.
      - The `<cos_bucket>` value is the name of bucket you created in COS istance.
-     - The `<at_region>` the region of the logDNA AT instance, example: us-south (https://cloud.ibm.com/docs/services/Log-Analysis-with-LogDNA?topic=LogDNA-regions).  
-     - The `<at_service_api_key>` is a logDNA AT [service key](https://cloud.ibm.com/docs/services/Log-Analysis-with-LogDNA?topic=LogDNA-export#api) for your logDNA AT instance.
+     - The `<at_region>` the region of the logDNA AT instance, example: us-south (https://cloud.ibm.com/docs/activity-tracker?topic=activity-tracker-regions).  
+     - The `<at_service_api_key>` is a logDNA AT [service key](https://cloud.ibm.com/docs/activity-tracker?topic=activity-tracker-service_keys#service_keys_ui) for your logDNA AT instance.
      - Optional : `<default_memory_request>` and `<memory_limit>`.  
      `<default_memory_request>` is default memory requested at time of POD creation.  
      `<memory_limit>` is maximum memory which will be provided to POD by cluster.  
