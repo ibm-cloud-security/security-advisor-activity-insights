@@ -1,4 +1,5 @@
 # DEPRECATED
+The Security Insights feature is deprecated and will no longer be supported.
 
 # Intro
 You can use the following steps to install an agent that will run on one of your Kubernetes clusters to collect audit flow logs from your IBM Cloud Account. These audit flow logs are stored in your Cloud Object Storage (COS) instance. Then, you can enable Security Advisor Activity Insights to analyze your activity flow logs to detect and alert you to suspicious activity.
